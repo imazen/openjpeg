@@ -855,6 +855,9 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 	old_comps = image->comps;
 	new_comps = (opj_image_comp_t*)
 			opj_malloc(nr_channels * sizeof(opj_image_comp_t));
+    if (!new_comps) {
+    	return;
+    }
 
 	for(i = 0; i < nr_channels; ++i) {
 		pcol = cmap[i].pcol; cmp = cmap[i].cmp;
@@ -871,6 +874,8 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 		/* Palette mapping: */
 		new_comps[i].data = (OPJ_INT32*)
 				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
+		if (!new_comps[i].data)
+			return;
 		new_comps[i].prec = channel_size[i];
 		new_comps[i].sgnd = channel_sign[i];
 	}

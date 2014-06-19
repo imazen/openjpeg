@@ -598,6 +598,8 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
         }
 
         bio = opj_bio_create();
+        if (!bio)
+        	return OPJ_FALSE;
         opj_bio_init_enc(bio, c, length);
         opj_bio_write(bio, 1, 1);           /* Empty header bit */
 
