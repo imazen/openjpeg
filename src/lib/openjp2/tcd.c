@@ -1953,6 +1953,8 @@ OPJ_BOOL opj_tcd_t1_encode ( opj_tcd_t *p_tcd )
         if (l_t1 == 00) {
                 return OPJ_FALSE;
         }
+        l_t1->encoder = OPJ_TRUE;
+
 
         if (l_tcp->mct == 1) {
                 /* irreversible encoding */
