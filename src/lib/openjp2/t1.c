@@ -1500,9 +1500,11 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 				for (precno = 0; precno < res->pw * res->ph; ++precno) {
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 					 OPJ_INT32 cblkno;
-					 
+					 OPJ_INT32 bandOdd = band->bandno & 1;
+					 OPJ_INT32 bandModTwo = band->bandno & 2;
+ 
 #ifdef _OPENMP			
-					 #pragma omp parallel default(none) private(cblkno) shared(band, prc, tilec, tccp, mct_norms, bandconst,compno, tile, tile_w, resno)
+					 #pragma omp parallel default(none) private(cblkno) shared(band, bandOdd, bandModTwo, prc, tilec, tccp, mct_norms, bandconst,compno, tile, tile_w, resno)
 					 {
 						
 					#pragma omp for
@@ -1513,33 +1515,27 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 						OPJ_UINT32 cblk_w;
 						OPJ_UINT32 cblk_h;
 						OPJ_UINT32 i, j;
-						OPJ_INT32 * restrict datap;
-
-
 						opj_t1_t * t1 = 00;
 						OPJ_INT32 x = cblk->x0 - band->x0;
 						OPJ_INT32 y = cblk->y0 - band->y0;
-						if (band->bandno & 1) {
+						if (bandOdd) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
 							x += pres->x1 - pres->x0;
 						}
-						if (band->bandno & 2) {
+						if (bandModTwo) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
 							y += pres->y1 - pres->y0;
 						}
 						t1 = opj_t1_create();
-				              //return OPJ_FALSE;
-				            
-				        
+						if (!t1)
+							continue;
 						if(!opj_t1_allocate_buffers(
 									t1,
 									(OPJ_UINT32)(cblk->x1 - cblk->x0),
 									(OPJ_UINT32)(cblk->y1 - cblk->y0)))
 						{
-							//return OPJ_FALSE;
+							continue;
 						}
-
-						datap=t1->data;
 						cblk_w = t1->w;
 						cblk_h = t1->h;
 
@@ -1548,14 +1544,14 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 							for (j = 0; j < cblk_h; ++j) {
 								for (i = 0; i < cblk_w; ++i) {
 									OPJ_INT32 tmp = tiledp[(j * tile_w) + i];
-									datap[(j * cblk_w) + i] = tmp << T1_NMSEDEC_FRACBITS;
+									t1->data[(j * cblk_w) + i] = tmp << T1_NMSEDEC_FRACBITS;
 								}
 							}
 						} else {		/* if (tccp->qmfbid == 0) */
 							for (j = 0; j < cblk_h; ++j) {
 								for (i = 0; i < cblk_w; ++i) {
 									OPJ_INT32 tmp = tiledp[(j * tile_w) + i];
-									datap[(j * cblk_w) + i] =
+									t1->data[(j * cblk_w) + i] =
 										opj_int_fix_mul(
 										tmp,
 										bandconst) >> (11 - T1_NMSEDEC_FRACBITS);
@@ -1575,6 +1571,7 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 								tile->numcomps,
 								tile,
 								mct_norms);
+						opj_t1_destroy(t1);
 
 					} /* cblkno */
 #ifdef _OPENMP
