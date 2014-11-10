@@ -9,6 +9,12 @@ os:
 #  - osx
 
 before_install:
+  # don't look in bin for deps
+  - export CMAKE_LIBRARY_PATH=.
+  
+  # see if static builds, as we'll be using that
+  - export tbsd_openjpeg_static=1
+  
   - if [ "$tbs_arch" = "x86" ];
     then
       sudo apt-get update -qq;
