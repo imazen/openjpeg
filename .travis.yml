@@ -9,9 +9,6 @@ os:
 #  - osx
 
 before_install:
-  # don't look in bin for deps
-  - export CMAKE_LIBRARY_PATH=.
-  
   # see if static builds, as we'll be using that
   - export tbsd_openjpeg_static=1
   
