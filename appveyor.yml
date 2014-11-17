@@ -60,6 +60,8 @@ build_script:
   - thumbs make
   - for /f "tokens=*" %%i in ('thumbs list_slib') do set files=%%i
   - 7z a %zip% %files%
+  - for /f "tokens=*" %%i in ('thumbs list_inc') do set files=%%i
+  - 7z a %zip% %files%
   - appveyor PushArtifact %zip%
   
   - ps: if(Test-Path $env:zip) {
