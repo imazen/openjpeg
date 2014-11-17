@@ -62,7 +62,7 @@ upper()
 
 # Local settings
 
-l_inc="./src/lib/openjpeg.h ./src/lib/opj_stdint.h ./build/src/lib/openjp2/opj_config.h"
+l_inc="./src/lib/openjp2/openjpeg.h ./src/lib/openjp2/opj_stdint.h ./build/src/lib/openjp2/opj_config.h"
 l_slib=
 l_dlib=
 l_bin=
