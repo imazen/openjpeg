@@ -71,7 +71,7 @@ list=
 make=
 c_flags=
 cm_tools=
-cm_args=(-DCMAKE_BUILD_TYPE=$tbs_conf)
+cm_args=(-DDISABLE_DEPS=ON -DCMAKE_BUILD_TYPE=$tbs_conf)
 
 [ $tbsd_openjpeg_static -gt 0 ] && cm_args+=(-DBUILD_SHARED_LIBS:BOOL=OFF)
 
